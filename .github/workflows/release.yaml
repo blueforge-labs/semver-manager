@@ -46,6 +46,10 @@ jobs:
       with:
         path: ""
         repository: ${{ github.repository }}
+    - name: Set up Go
+      uses: actions/setup-go@v6
+      with:
+        go-version-file: go.mod
     - name: Get Commit Version Increment
       id: commit_increment
       uses: Bluepr-nt/Commit-Increment@main
