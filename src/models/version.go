@@ -94,9 +94,11 @@ func (v *Version) IsEqualTo(versionB Version) bool {
 // IsHigherThan compares two Versions and returns true if the first version is higher than the second
 // according to the Semver specification
 func (v Version) IsHigherThan(versionB Version) bool {
-
 	if v.Release.IsHigherThan(versionB.Release) {
 		return true
+	}
+	if versionB.Release.IsHigherThan(v.Release) {
+		return false
 	}
 
 	if v.IsRelease() && !versionB.IsRelease() {
@@ -116,7 +118,6 @@ func (v *Version) String() string {
 }
 
 func ParseVersion(v string) (Version, error) {
-
 	rRelease, rPrerelease, rBuildMetadata := GetVersionComponents(v)
 	release, err := ParseRelease(rRelease)
 	if err != nil {
@@ -136,7 +137,6 @@ func ParseVersion(v string) (Version, error) {
 	var buildMetadata BuildMetadata
 	if rBuildMetadata == "" {
 		buildMetadata = BuildMetadata{}
-
 	} else {
 		buildMetadata, err = ParseBuildMetadata(rBuildMetadata)
 		if err != nil {
@@ -157,7 +157,6 @@ func GetVersionComponents(v string) (release, prerelease, buildMetadata string) 
 	prerelease = GetPrerelease(v)
 	buildMetadata = GetBuildMetadata(v)
 	return release, prerelease, buildMetadata
-
 }
 
 func GetRelease(v string) string {
@@ -201,7 +200,6 @@ func (vs VersionSlice) String() string {
 }
 
 func ParseVersions(vList string) (VersionSlice, error) {
-
 	versionStrings := SplitVersions(vList)
 	var versions VersionSlice
 
@@ -218,7 +216,6 @@ func ParseVersions(vList string) (VersionSlice, error) {
 }
 
 func ParseBuildMetadata(metadata string) (BuildMetadata, error) {
-
 	identifiers := strings.Split(metadata, ".")
 	buildIdentifiers := []BuildIdentifier{}
 	for _, identifier := range identifiers {
@@ -409,11 +406,18 @@ func (i PRIdentifier) IsEqualTo(identifierB PRIdentifier) bool {
 // IsHigherThan compares two PRIdentifiers and returns true if the first identifier is higher than the second
 // according to the Semver specification
 func (i PRIdentifier) IsHigherThan(identifierB PRIdentifier) bool {
-	if containsOnly(i.identifier, numbers) && containsOnly(identifierB.identifier, numbers) {
-		iValue, _ := strconv.ParseUint(i.identifier, 10, 64)
-		identifierBValue, _ := strconv.ParseUint(identifierB.identifier, 10, 64)
-		return iValue > identifierBValue
+	iNumeric := containsOnly(i.identifier, numbers)
+	identifierBNumeric := containsOnly(identifierB.identifier, numbers)
+	if iNumeric && identifierBNumeric {
+		if len(i.identifier) != len(identifierB.identifier) {
+			return len(i.identifier) > len(identifierB.identifier)
+		}
+		return i.identifier > identifierB.identifier
 	}
+	if iNumeric != identifierBNumeric {
+		return !iNumeric
+	}
+
 	return i.identifier > identifierB.identifier
 }
 
@@ -452,7 +456,6 @@ func (i *PRIdentifier) Set(v string) error {
 }
 
 func containsOnly(s string, set string) bool {
-
 	characterIsInSet := func(r rune) bool {
 		return strings.ContainsRune(set, r)
 	}

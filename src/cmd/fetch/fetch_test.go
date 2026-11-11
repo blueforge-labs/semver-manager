@@ -67,7 +67,7 @@ func TestNewFetchCommandRealRepo(t *testing.T) {
 				{"platform", "github"},
 				{"highest", "false"},
 			},
-			expectedTags: "0.0.4 1.0.0-0A.is.legal 1.0.0-alpha 1.0.0-alpha+beta 1.0.0-alpha.1 1.0.0-alpha.0valid 1.0.0-alpha.beta 1.0.0-alpha.beta.1 1.0.0-alpha-a.b-c-somethinglong+build.1-aef.1-its-okay 1.0.0-alpha0.valid 1.0.0-beta 1.0.0-rc.1+build.1 1.0.0 1.0.0+0.build.1-rc.10000aaa-kk-0.1 1.1.2-prerelease+meta 1.1.2+meta 1.1.2+meta-valid 1.1.7 1.2.3----R-S.12.9.1--.12+meta 1.2.3----RC-SNAPSHOT.12.9.1--.12+788 1.2.3----RC-SNAPSHOT.12.9.1--.12 1.2.3-SNAPSHOT-123 1.2.3-beta 1.2.3 2.0.0-rc.1+build.123 2.0.0+build.1848 2.0.0 2.0.1-alpha.1227 10.2.3-DEV-SNAPSHOT 10.20.30\n",
+			expectedTags: "10.20.30 10.2.3-DEV-SNAPSHOT 2.0.1-alpha.1227 2.0.0 2.0.0+build.1848 2.0.0-rc.1+build.123 1.2.3 1.2.3-beta 1.2.3-SNAPSHOT-123 1.2.3----RC-SNAPSHOT.12.9.1--.12 1.2.3----RC-SNAPSHOT.12.9.1--.12+788 1.2.3----R-S.12.9.1--.12+meta 1.1.7 1.1.2+meta 1.1.2+meta-valid 1.1.2-prerelease+meta 1.0.0 1.0.0+0.build.1-rc.10000aaa-kk-0.1 1.0.0-rc.1+build.1 1.0.0-beta 1.0.0-alpha0.valid 1.0.0-alpha-a.b-c-somethinglong+build.1-aef.1-its-okay 1.0.0-alpha.beta.1 1.0.0-alpha.beta 1.0.0-alpha.0valid 1.0.0-alpha.1 1.0.0-alpha 1.0.0-alpha+beta 1.0.0-0A.is.legal 0.0.4\n",
 		},
 		{
 			name: "fetch only the highest semver tag",
@@ -90,7 +90,7 @@ func TestNewFetchCommandRealRepo(t *testing.T) {
 				{"highest", "false"},
 				{"stream", "*.*.*"},
 			},
-			expectedTags: "0.0.4 1.0.0 1.0.0+0.build.1-rc.10000aaa-kk-0.1 1.1.2+meta 1.1.2+meta-valid 1.1.7 1.2.3 2.0.0+build.1848 2.0.0 10.20.30\n",
+			expectedTags: "10.20.30 2.0.0 2.0.0+build.1848 1.2.3 1.1.7 1.1.2+meta 1.1.2+meta-valid 1.0.0 1.0.0+0.build.1-rc.10000aaa-kk-0.1 0.0.4\n",
 		},
 	}
 

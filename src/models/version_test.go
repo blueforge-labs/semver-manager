@@ -356,6 +356,14 @@ func TestVersion_IsHigherThan(t *testing.T) {
 			want: true,
 		},
 		{
+			name: "Prerelease with higher core version is higher than release",
+			v:    "2.0.1-alpha",
+			args: args{
+				versionB: "2.0.0",
+			},
+			want: true,
+		},
+		{
 			name: "Same version not higher",
 			v:    "1.0.0",
 			args: args{
@@ -416,6 +424,22 @@ func TestVersion_IsHigherThan(t *testing.T) {
 			v:    "1.0.0-beta.11",
 			args: args{
 				versionB: "1.0.0-beta.2",
+			},
+			want: true,
+		},
+		{
+			name: "Large numeric prerelease identifiers compare without overflow",
+			v:    "1.0.0-alpha.18446744073709551616",
+			args: args{
+				versionB: "1.0.0-alpha.9999999999999999999",
+			},
+			want: true,
+		},
+		{
+			name: "Large numeric prerelease identifiers compare without overflow",
+			v:    "1.0.0-alpha.18446744073709551616",
+			args: args{
+				versionB: "1.0.0-alpha.9999999999999999999",
 			},
 			want: true,
 		},
