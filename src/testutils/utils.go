@@ -5,7 +5,7 @@ import (
 
 	"github.com/joho/godotenv"
 
-	"github.com/bluepr-nt/semver-manager/src/models"
+	"github.com/blueforge-labs/semver-manager/src/models"
 )
 
 func GetGithubToken() string {

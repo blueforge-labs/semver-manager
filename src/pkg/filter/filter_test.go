@@ -4,8 +4,8 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/bluepr-nt/semver-manager/src/models"
-	"github.com/bluepr-nt/semver-manager/src/testutils"
+	"github.com/blueforge-labs/semver-manager/src/models"
+	"github.com/blueforge-labs/semver-manager/src/testutils"
 
 	"github.com/stretchr/testify/assert"
 )

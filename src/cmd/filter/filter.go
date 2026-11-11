@@ -1,8 +1,8 @@
 package filter
 
 import (
-	"github.com/bluepr-nt/semver-manager/src/models"
-	"github.com/bluepr-nt/semver-manager/src/pkg/filter"
+	"github.com/blueforge-labs/semver-manager/src/models"
+	"github.com/blueforge-labs/semver-manager/src/pkg/filter"
 
 	"github.com/spf13/cobra"
 )

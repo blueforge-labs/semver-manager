@@ -1,9 +1,9 @@
 # Semver-Manager
 
-[![Build](https://github.com/bluepr-nt/semver-manager/actions/workflows/on-push-to-main.yaml/badge.svg)](https://github.com/bluepr-nt/semver-manager/actions/workflows/on-push-to-main.yaml)
+[![Build](https://github.com/blueforge-labs/semver-manager/actions/workflows/on-push-to-main.yaml/badge.svg)](https://github.com/blueforge-labs/semver-manager/actions/workflows/on-push-to-main.yaml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Go](https://img.shields.io/badge/Go-1.27.4-00ADD8.svg)](https://golang.org/)
-[![Go Report Card](https://goreportcard.com/badge/github.com/bluepr-nt/semver-manager)](https://goreportcard.com/report/github.com/bluepr-nt/semver-manager)
+[![Go Report Card](https://goreportcard.com/badge/github.com/blueforge-labs/semver-manager)](https://goreportcard.com/report/github.com/blueforge-labs/semver-manager)
 
 A CLI tool for managing [Semantic Versioning 2.0.0](https://semver.org) compliant versions — increment, filter, and fetch version tags from GitHub repositories.
 
@@ -34,14 +34,14 @@ smgr filter --versions "1.0.0 2.0.0 1.1.0" --stream "1.*.*" --highest
 # → 1.1.0
 
 # Fetch tags from a GitHub repository
-smgr fetch -o bluepr-nt -r semver-manager -t "$GITHUB_TOKEN"
+smgr fetch -o blueforge-labs -r semver-manager -t "$GITHUB_TOKEN"
 ```
 
 ## Installation
 
 ### Precompiled Binaries (Linux only)
 
-1. Download the binary from the [Releases](https://github.com/bluepr-nt/semver-manager/releases) page.
+1. Download the binary from the [Releases](https://github.com/blueforge-labs/semver-manager/releases) page.
 2. Move the `smgr` binary to a directory in your `PATH`.
 
 ### Building from Source
@@ -52,15 +52,15 @@ Prerequisites: [Go](https://golang.org/dl/) 1.27.4+
 go build -o smgr ./src/cmd/smgr/
 ```
 
-### System-Wide Install with Just
+### Install with Just
 
-From a checkout, install to `/usr/local/bin` (requires Go 1.27.4+, just, and write access to `/usr/local/bin`):
+From a checkout, install to `~/.local/bin` without elevated privileges (requires Go 1.27.4+ and just):
 
 ```bash
 just install
 ```
 
-`just install` also builds the binary and does not request elevated privileges. Set `PREFIX` to change the install prefix and `DESTDIR` to stage the installation, for example `PREFIX=/usr DESTDIR=/tmp/staging just install`. Remove the installed binary manually when no longer needed.
+`just install` also builds the binary. Ensure `~/.local/bin` is on your `PATH`. Set `PREFIX` to change the install prefix and `DESTDIR` to stage the installation, for example `PREFIX=/usr DESTDIR=/tmp/staging just install`. A system-wide prefix requires write access to its `bin` directory. Remove the installed binary manually when no longer needed.
 
 ### System-Wide Install with Go
 
@@ -97,7 +97,7 @@ This requires `base-devel`, Git and Go; `makepkg -si` can install the declared b
 
 ### Go Module
 
-Other Go projects can depend on this repository with `go get github.com/bluepr-nt/semver-manager@latest`. Library packages are under `src/`, for example `github.com/bluepr-nt/semver-manager/src/pkg/increment`.
+Other Go projects can depend on this repository with `go get github.com/blueforge-labs/semver-manager@latest`. Library packages are under `src/`, for example `github.com/blueforge-labs/semver-manager/src/pkg/increment`.
 
 ## Commands
 
@@ -188,10 +188,10 @@ Fetch semantic version tags from a GitHub repository. Automatically chains with 
 
 ```bash
 # Fetch all semver tags from a repo
-smgr fetch -o bluepr-nt -r semver-manager -t "$GITHUB_TOKEN"
+smgr fetch -o blueforge-labs -r semver-manager -t "$GITHUB_TOKEN"
 
 # Fetch and filter to highest in a stream
-smgr fetch -o bluepr-nt -r semver-manager -t "$GITHUB_TOKEN" --stream "1.*.*" --highest
+smgr fetch -o blueforge-labs -r semver-manager -t "$GITHUB_TOKEN" --stream "1.*.*" --highest
 ```
 
 ## Contributing

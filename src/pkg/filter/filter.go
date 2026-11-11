@@ -3,7 +3,7 @@ package filter
 import (
 	"strconv"
 
-	"github.com/bluepr-nt/semver-manager/src/models"
+	"github.com/blueforge-labs/semver-manager/src/models"
 
 	"github.com/blang/semver/v4"
 )

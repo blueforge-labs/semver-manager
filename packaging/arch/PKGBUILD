@@ -3,12 +3,12 @@ pkgver=r0.g0000000
 pkgrel=1
 pkgdesc='Manage Semantic Versioning compliant versions'
 arch=('x86_64' 'aarch64')
-url='https://github.com/bluepr-nt/semver-manager'
+url='https://github.com/blueforge-labs/semver-manager'
 license=('MIT')
 makedepends=('git' 'go')
 provides=('semver-manager')
 conflicts=('semver-manager')
-source=("semver-manager::git+https://github.com/bluepr-nt/semver-manager.git#branch=main")
+source=("semver-manager::git+https://github.com/blueforge-labs/semver-manager.git#branch=main")
 sha256sums=('SKIP')
 
 pkgver() {

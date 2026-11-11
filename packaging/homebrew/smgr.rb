@@ -1,7 +1,7 @@
 class Smgr < Formula
   desc "Manage Semantic Versioning compliant versions"
-  homepage "https://github.com/bluepr-nt/semver-manager"
-  head "https://github.com/bluepr-nt/semver-manager.git", branch: "main"
+  homepage "https://github.com/blueforge-labs/semver-manager"
+  head "https://github.com/blueforge-labs/semver-manager.git", branch: "main"
   license "MIT"
 
   depends_on "go" => :build

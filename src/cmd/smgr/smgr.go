@@ -9,10 +9,10 @@ import (
 	"github.com/spf13/cobra"
 	"k8s.io/klog/v2"
 
-	"github.com/bluepr-nt/semver-manager/src/cmd/fetch"
-	"github.com/bluepr-nt/semver-manager/src/cmd/filter"
-	"github.com/bluepr-nt/semver-manager/src/cmd/increment"
-	"github.com/bluepr-nt/semver-manager/src/cmd/utils"
+	"github.com/blueforge-labs/semver-manager/src/cmd/fetch"
+	"github.com/blueforge-labs/semver-manager/src/cmd/filter"
+	"github.com/blueforge-labs/semver-manager/src/cmd/increment"
+	"github.com/blueforge-labs/semver-manager/src/cmd/utils"
 )
 
 type config struct {

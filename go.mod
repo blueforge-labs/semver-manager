@@ -1,4 +1,4 @@
-module github.com/bluepr-nt/semver-manager
+module github.com/blueforge-labs/semver-manager
 
 go 1.27.4
 

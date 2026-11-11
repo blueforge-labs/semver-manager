@@ -6,7 +6,7 @@ import (
 	"os/exec"
 	"testing"
 
-	"github.com/bluepr-nt/semver-manager/src/testutils"
+	"github.com/blueforge-labs/semver-manager/src/testutils"
 	"github.com/stretchr/testify/assert"
 )
 
