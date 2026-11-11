@@ -27,13 +27,8 @@ jobs:
           ^((build|ci|docs|feat|fix|perf|refactor|test)(\([a-z 0-9,.\-]+\))?!: [\w \(\),:.;\-#&']+|\nBREAKING CHANGES: [\w \(\),:.;\-#&']+)$
         minor_pattern: |
           ^(feat)(\([a-z 0-9,.\-]+\))?!?: [\w \(\),:.;\-#&']+$
-    - name: Checkout code
-      uses: actions/checkout@v6
-      with:
-        path: Semver-manager
-        repository: Bluepr-nt/Semver-manager
     - name: Build semver-manager
-      run: cd Semver-manager && go build -o ../smgr ./src/cmd/smgr/ && cd ..
+      run: go build -o smgr ./src/cmd/smgr/
     - name: Generate new version
       run: |
         EXISTING_VERSIONS=$(./smgr fetch --repo ${{ github.event.repository.name }} --owner ${{ github.repository_owner }} --token ${{ secrets.GITHUB_TOKEN }})
