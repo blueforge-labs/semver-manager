@@ -58,6 +58,49 @@ Or with [Devbox](https://www.jetify.com/devbox) (no Go prerequisite):
 devbox run build
 ```
 
+### System-Wide Install with Just
+
+From a checkout, install to `/usr/local/bin` (requires Go 1.23+, just, and write access to `/usr/local/bin`):
+
+```bash
+just install
+```
+
+`just install` also builds the binary and does not request elevated privileges. Set `PREFIX` to change the install prefix and `DESTDIR` to stage the installation, for example `PREFIX=/usr DESTDIR=/tmp/staging just install`. Remove the installed binary manually when no longer needed.
+
+### System-Wide Install with Go
+
+From a checkout, install with Go 1.23+ to a system-wide directory that your user can write to:
+
+```bash
+GOBIN=/usr/local/bin go install ./src/cmd/smgr
+```
+
+Ensure the destination is on your `PATH`. Without a writable system-wide directory, installation requires an administrator to configure permissions or perform the installation.
+
+### Homebrew
+
+From a checkout, install the development version from the upstream `main` branch:
+
+```bash
+brew tap-new local/semver-manager
+cp packaging/homebrew/smgr.rb "$(brew --repository local/semver-manager)/Formula/smgr.rb"
+brew install --HEAD local/semver-manager/smgr
+```
+
+This builds from source and installs into Homebrew's prefix. The formula is not yet published in a remote tap. Remove the local tap with `brew untap local/semver-manager` after uninstalling the formula.
+
+### Arch Linux
+
+From a checkout, build the development package from the upstream `main` branch and install it with pacman:
+
+```bash
+cd packaging/arch
+makepkg -si
+```
+
+This requires `base-devel`, Git and Go; `makepkg -si` can install the declared build dependencies with pacman. Remove the package with `sudo pacman -R semver-manager-git`. The PKGBUILD is not yet published to the AUR, so `paru -S semver-manager-git` will only work after it is published there.
+
 ### Go Module
 
 Other Go projects can depend on this repository with `go get github.com/bluepr-nt/semver-manager@latest`. Library packages are under `src/`, for example `github.com/bluepr-nt/semver-manager/src/pkg/increment`.
