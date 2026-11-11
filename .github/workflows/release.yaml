@@ -8,11 +8,11 @@ jobs:
   build-cli:
     name: build-cli
     runs-on: ubuntu-latest
-    container: golang:1.26
+    container: golang:1.27.4
     steps:
     - name: Setup Git environment
       run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
-    - name: Set up Go 1.26 environment
+    - name: Set up Go 1.27.4 environment
       run: go version
     - name: Checkout code for build-cli
       uses: actions/checkout@v6
@@ -46,9 +46,13 @@ jobs:
       with:
         path: ""
         repository: ${{ github.repository }}
+    - name: Set up Go
+      uses: actions/setup-go@v6
+      with:
+        go-version-file: go.mod
     - name: Get Commit Version Increment
       id: commit_increment
-      uses: Bluepr-nt/Commit-Increment@main
+      uses: blueforge-labs/Commit-Increment@main
       with:
         major_pattern: |
           ^((build|ci|docs|feat|fix|perf|refactor|test)(\([a-z 0-9,.\-]+\))?!: [\w \(\),:.;\-#&']+|\nBREAKING CHANGES: [\w \(\),:.;\-#&']+)$
@@ -110,7 +114,7 @@ jobs:
       OWNER: 13013SwagR
       REPO: semver-manager-test
       TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    container: golang:1.26
+    container: golang:1.27.4
     steps:
     - name: Checkout code
       uses: actions/checkout@v6

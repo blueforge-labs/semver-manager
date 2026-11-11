@@ -1,0 +1,33 @@
+pkgname=semver-manager-git
+pkgver=r0.g0000000
+pkgrel=1
+pkgdesc='Manage Semantic Versioning compliant versions'
+arch=('x86_64' 'aarch64')
+url='https://github.com/blueforge-labs/semver-manager'
+license=('MIT')
+makedepends=('git' 'go')
+provides=('semver-manager')
+conflicts=('semver-manager')
+source=("semver-manager::git+https://github.com/blueforge-labs/semver-manager.git#branch=main")
+sha256sums=('SKIP')
+
+pkgver() {
+  cd "$srcdir/semver-manager"
+  printf 'r%s.g%s' "$(git rev-list --count HEAD)" "$(git rev-parse --short=7 HEAD)"
+}
+
+build() {
+  cd "$srcdir/semver-manager"
+  go build -trimpath -buildmode=pie -o smgr ./src/cmd/smgr
+}
+
+check() {
+  cd "$srcdir/semver-manager"
+  ./smgr increment --level patch | grep -Fx '0.0.1'
+}
+
+package() {
+  cd "$srcdir/semver-manager"
+  install -Dm755 smgr "$pkgdir/usr/bin/smgr"
+  install -Dm644 LICENSE "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
+}

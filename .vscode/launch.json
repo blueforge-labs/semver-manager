@@ -20,7 +20,7 @@
       "mode": "debug",
       "program": "${workspaceFolder}/src/cmd/smgr/smgr.go",
       "env": {},
-      "args": ["fetch", "-o", "bluepr-nt", "-r", "semver-manager", "-t", "github_pat_<token>"]
+      "args": ["fetch", "-o", "blueforge-labs", "-r", "semver-manager", "-t", "github_pat_<token>"]
     }
   ]
 }

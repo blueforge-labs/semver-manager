@@ -1,13 +1,13 @@
 package fetch
 
 import (
-	"github.com/bluepr-nt/semver-manager/src/cmd/filter"
-	"github.com/bluepr-nt/semver-manager/src/cmd/utils"
-	datasourceUtils "github.com/bluepr-nt/semver-manager/src/datasource/utils"
+	"github.com/blueforge-labs/semver-manager/src/cmd/filter"
+	"github.com/blueforge-labs/semver-manager/src/cmd/utils"
+	datasourceUtils "github.com/blueforge-labs/semver-manager/src/datasource/utils"
 	"strings"
 
 	"github.com/spf13/cobra"
-	"k8s.io/klog"
+	"k8s.io/klog/v2"
 )
 
 type config struct {

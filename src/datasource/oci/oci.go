@@ -1,8 +1,8 @@
 package oci
 
 import (
-	"github.com/bluepr-nt/semver-manager/src/models"
-	"github.com/bluepr-nt/semver-manager/src/utils"
+	"github.com/blueforge-labs/semver-manager/src/models"
+	"github.com/blueforge-labs/semver-manager/src/utils"
 )
 
 type OciCLient struct {

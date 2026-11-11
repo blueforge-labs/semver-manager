@@ -4,8 +4,8 @@ import (
 	"bytes"
 	"testing"
 
-	"github.com/bluepr-nt/semver-manager/src/cmd/filter"
-	"github.com/bluepr-nt/semver-manager/src/testutils"
+	"github.com/blueforge-labs/semver-manager/src/cmd/filter"
+	"github.com/blueforge-labs/semver-manager/src/testutils"
 
 	"github.com/stretchr/testify/assert"
 )
