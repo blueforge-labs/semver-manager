@@ -118,4 +118,3 @@ jobs:
       run: go test ./src/...
 env:
   ARTIFACT_NAME: smgr
-# trigger workflow
