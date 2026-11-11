@@ -4,7 +4,7 @@ environments:
     type: docker
     config:
         image: golang:1.27.4
-      docker:go:1.27.4:test:
+  docker:go:1.27.4:test:
     aliases: ["test"]
     type: docker
     config:
