@@ -1,10 +1,12 @@
 package fetch
 
 import (
+	"sort"
+	"strings"
+
 	"github.com/blueforge-labs/semver-manager/src/cmd/filter"
 	"github.com/blueforge-labs/semver-manager/src/cmd/utils"
 	datasourceUtils "github.com/blueforge-labs/semver-manager/src/datasource/utils"
-	"strings"
 
 	"github.com/spf13/cobra"
 	"k8s.io/klog/v2"
@@ -63,6 +65,15 @@ func RunFetchSemverTags(config *config, cmd *cobra.Command, filterArgs *filter.F
 	if err != nil {
 		return err
 	}
+	sort.SliceStable(filteredTags, func(i, j int) bool {
+		if filteredTags[i].IsHigherThan(filteredTags[j]) {
+			return true
+		}
+		if filteredTags[j].IsHigherThan(filteredTags[i]) {
+			return false
+		}
+		return filteredTags[i].String() < filteredTags[j].String()
+	})
 	cmd.Println(filteredTags.String())
 
 	return nil
