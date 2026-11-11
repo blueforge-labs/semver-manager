@@ -1,9 +1,9 @@
 package fetch
 
 import (
-	"src/cmd/smgr/cmd/filter"
-	"src/cmd/smgr/cmd/utils"
-	datasourceUtils "src/cmd/smgr/datasource/utils"
+	"github.com/bluepr-nt/semver-manager/src/cmd/filter"
+	"github.com/bluepr-nt/semver-manager/src/cmd/utils"
+	datasourceUtils "github.com/bluepr-nt/semver-manager/src/datasource/utils"
 	"strings"
 
 	"github.com/spf13/cobra"

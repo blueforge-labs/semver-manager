@@ -4,8 +4,8 @@ import (
 	"errors"
 	"testing"
 
-	"src/cmd/smgr/models"
-	"src/cmd/smgr/testutils"
+	"github.com/bluepr-nt/semver-manager/src/models"
+	"github.com/bluepr-nt/semver-manager/src/testutils"
 
 	"github.com/stretchr/testify/assert"
 )

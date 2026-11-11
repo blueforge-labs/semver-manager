@@ -17,7 +17,7 @@ jobs:
     - name: Checkout code for build-cli
       uses: actions/checkout@v6
     - name: Execute build commands for build-cli
-      run: cd src && go build -o ../build-artefacts/smgr ./cmd/smgr
+      run: go build -o build-artefacts/smgr ./src/cmd/smgr
     - name: Generate build number
       run: |
         BUILD_NUMBER=$(echo ${GITHUB_SHA} | cut -c1-7)-$(date '+%Y%m%dT%H%M%S')-$GITHUB_RUN_NUMBER
@@ -60,7 +60,7 @@ jobs:
         path: Semver-manager
         repository: Bluepr-nt/Semver-manager
     - name: Build semver-manager
-      run: cd Semver-manager/src && go build -o ../../smgr ./cmd/smgr/ && cd ../..
+      run: cd Semver-manager && go build -o ../smgr ./src/cmd/smgr/ && cd ..
     - name: Generate new version
       run: |
         EXISTING_VERSIONS=$(./smgr fetch --repo ${{ github.event.repository.name }} --owner ${{ github.repository_owner }} --token ${{ secrets.GITHUB_TOKEN }})
@@ -123,6 +123,6 @@ jobs:
         path: ""
         repository: ${{ github.repository }}
     - name: Execute test commands for tests
-      run: cd src && go test ./...
+      run: go test ./src/...
 env:
   ARTIFACT_NAME: smgr

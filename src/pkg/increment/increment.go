@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"strconv"
 
-	"src/cmd/smgr/models"
-	"src/cmd/smgr/pkg/filter"
-	"src/cmd/smgr/utils"
+	"github.com/bluepr-nt/semver-manager/src/models"
+	"github.com/bluepr-nt/semver-manager/src/pkg/filter"
+	"github.com/bluepr-nt/semver-manager/src/utils"
 )
 
 func IncrementVersion(sourceVersions []models.Version, streamPattern models.VersionPattern, increment models.Increment) (incrementedVersion models.Version, err error) {

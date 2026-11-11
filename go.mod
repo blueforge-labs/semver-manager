@@ -1,4 +1,4 @@
-module src/cmd/smgr
+module github.com/bluepr-nt/semver-manager
 
 go 1.23
 

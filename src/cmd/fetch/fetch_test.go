@@ -2,26 +2,17 @@ package fetch
 
 import (
 	"bytes"
-	"os"
 	"testing"
 
-	"src/cmd/smgr/cmd/filter"
+	"github.com/bluepr-nt/semver-manager/src/cmd/filter"
+	"github.com/bluepr-nt/semver-manager/src/testutils"
 
-	"github.com/joho/godotenv"
 	"github.com/stretchr/testify/assert"
 )
 
 type testFlag struct {
 	name  string
 	value string
-}
-
-func LoadEnvFromFile() error {
-	err := godotenv.Load("fetch_test.yaml")
-	if err != nil {
-		return err
-	}
-	return nil
 }
 
 func TestNewFetchCommand(t *testing.T) {
@@ -59,13 +50,9 @@ func TestNewFetchCommand(t *testing.T) {
 }
 
 func TestNewFetchCommandRealRepo(t *testing.T) {
-	LoadEnvFromFile()
-	owner := os.Getenv("OWNER")
-	repo := os.Getenv("REPO")
-	token := os.Getenv("TOKEN")
-	if owner == "" || repo == "" || token == "" {
-		t.Fatalf("OWNER %s, REPO %s, and TOKEN %s environment variables must be set for this test.", owner, repo, token)
-	}
+	owner := "blueforge-labs"
+	repo := "semver-manager-test"
+	token := testutils.GetGithubToken()
 	tests := []struct {
 		name         string
 		flags        []testFlag
