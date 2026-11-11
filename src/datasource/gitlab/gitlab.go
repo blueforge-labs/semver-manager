@@ -1,8 +1,8 @@
 package gitlab
 
 import (
-	"src/cmd/smgr/models"
-	"src/cmd/smgr/utils"
+	"github.com/bluepr-nt/semver-manager/src/models"
+	"github.com/bluepr-nt/semver-manager/src/utils"
 )
 
 type GitlabClient struct {

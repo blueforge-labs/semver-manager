@@ -49,7 +49,7 @@ smgr fetch -o bluepr-nt -r semver-manager -t "$GITHUB_TOKEN"
 Prerequisites: [Go](https://golang.org/dl/) 1.23+
 
 ```bash
-cd src/ && go build -o smgr ./cmd/smgr/
+go build -o smgr ./src/cmd/smgr/
 ```
 
 Or with [Devbox](https://www.jetify.com/devbox) (no Go prerequisite):
@@ -57,6 +57,10 @@ Or with [Devbox](https://www.jetify.com/devbox) (no Go prerequisite):
 ```bash
 devbox run build
 ```
+
+### Go Module
+
+Other Go projects can depend on this repository with `go get github.com/bluepr-nt/semver-manager@latest`. Library packages are under `src/`, for example `github.com/bluepr-nt/semver-manager/src/pkg/increment`.
 
 ## Commands
 

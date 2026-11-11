@@ -1,10 +1,10 @@
 package increment
 
 import (
-	"src/cmd/smgr/cmd/utils"
-	"src/cmd/smgr/models"
-	"src/cmd/smgr/pkg/filter"
-	"src/cmd/smgr/pkg/increment"
+	"github.com/bluepr-nt/semver-manager/src/cmd/utils"
+	"github.com/bluepr-nt/semver-manager/src/models"
+	"github.com/bluepr-nt/semver-manager/src/pkg/filter"
+	"github.com/bluepr-nt/semver-manager/src/pkg/increment"
 
 	"github.com/spf13/cobra"
 )

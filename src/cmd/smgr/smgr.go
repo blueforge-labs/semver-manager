@@ -9,10 +9,10 @@ import (
 	"github.com/spf13/cobra"
 	"k8s.io/klog/v2"
 
-	"src/cmd/smgr/cmd/fetch"
-	"src/cmd/smgr/cmd/filter"
-	"src/cmd/smgr/cmd/increment"
-	"src/cmd/smgr/cmd/utils"
+	"github.com/bluepr-nt/semver-manager/src/cmd/fetch"
+	"github.com/bluepr-nt/semver-manager/src/cmd/filter"
+	"github.com/bluepr-nt/semver-manager/src/cmd/increment"
+	"github.com/bluepr-nt/semver-manager/src/cmd/utils"
 )
 
 type config struct {

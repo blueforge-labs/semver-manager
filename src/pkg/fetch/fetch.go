@@ -3,11 +3,11 @@ package fetch
 import (
 	"errors"
 
-	"src/cmd/smgr/datasource/github"
-	"src/cmd/smgr/datasource/gitlab"
-	"src/cmd/smgr/datasource/oci"
-	"src/cmd/smgr/models"
-	"src/cmd/smgr/utils"
+	"github.com/bluepr-nt/semver-manager/src/datasource/github"
+	"github.com/bluepr-nt/semver-manager/src/datasource/gitlab"
+	"github.com/bluepr-nt/semver-manager/src/datasource/oci"
+	"github.com/bluepr-nt/semver-manager/src/models"
+	"github.com/bluepr-nt/semver-manager/src/utils"
 )
 
 type Fetcher interface {

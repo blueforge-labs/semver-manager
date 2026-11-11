@@ -1,8 +1,8 @@
 package filter
 
 import (
-	"src/cmd/smgr/models"
-	"src/cmd/smgr/pkg/filter"
+	"github.com/bluepr-nt/semver-manager/src/models"
+	"github.com/bluepr-nt/semver-manager/src/pkg/filter"
 
 	"github.com/spf13/cobra"
 )
