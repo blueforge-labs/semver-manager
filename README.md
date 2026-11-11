@@ -1,6 +1,6 @@
 # Semver-Manager
 
-[![Build](https://github.com/blueforge-labs/semver-manager/actions/workflows/on-push-to-main.yaml/badge.svg)](https://github.com/blueforge-labs/semver-manager/actions/workflows/on-push-to-main.yaml)
+[![Build](https://github.com/blueforge-labs/semver-manager/actions/workflows/release.yaml/badge.svg)](https://github.com/blueforge-labs/semver-manager/actions/workflows/release.yaml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Go](https://img.shields.io/badge/Go-1.27.4-00ADD8.svg)](https://golang.org/)
 [![Go Report Card](https://goreportcard.com/badge/github.com/blueforge-labs/semver-manager)](https://goreportcard.com/report/github.com/blueforge-labs/semver-manager)
@@ -62,27 +62,26 @@ just install
 
 `just install` also builds the binary. Ensure `~/.local/bin` is on your `PATH`. Set `PREFIX` to change the install prefix and `DESTDIR` to stage the installation, for example `PREFIX=/usr DESTDIR=/tmp/staging just install`. A system-wide prefix requires write access to its `bin` directory. Remove the installed binary manually when no longer needed.
 
-### System-Wide Install with Go
+### Install with Go
 
-From a checkout, install with Go 1.27.4+ to a system-wide directory that your user can write to:
+Install the latest version from GitHub with Go 1.27.4+ to your user-local bin directory:
 
 ```bash
-GOBIN=/usr/local/bin go install ./src/cmd/smgr
+GOBIN="$HOME/.local/bin" go install github.com/blueforge-labs/semver-manager/src/cmd/smgr@latest
 ```
 
-Ensure the destination is on your `PATH`. Without a writable system-wide directory, installation requires an administrator to configure permissions or perform the installation.
+Ensure `~/.local/bin` is on your `PATH`. This installs only for the current user and does not require elevated privileges.
 
 ### Homebrew
 
-From a checkout, install the development version from the upstream `main` branch:
+Tap this repository and install the development version from its formula:
 
 ```bash
-brew tap-new local/semver-manager
-cp packaging/homebrew/smgr.rb "$(brew --repository local/semver-manager)/Formula/smgr.rb"
-brew install --HEAD local/semver-manager/smgr
+brew tap blueforge-labs/semver-manager https://github.com/blueforge-labs/semver-manager.git
+brew install --HEAD blueforge-labs/semver-manager/smgr
 ```
 
-This builds from source and installs into Homebrew's prefix. The formula is not yet published in a remote tap. Remove the local tap with `brew untap local/semver-manager` after uninstalling the formula.
+The explicit Git URL lets this repository serve as a tap without renaming it to use Homebrew's `homebrew-` convention. This builds the upstream `main` branch from source. Remove it with `brew uninstall smgr`, then `brew untap blueforge-labs/semver-manager`.
 
 ### Arch Linux
 
