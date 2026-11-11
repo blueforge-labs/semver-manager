@@ -7,7 +7,7 @@ import (
 	"sort"
 
 	"github.com/Masterminds/semver/v3"
-	"github.com/google/go-github/v51/github"
+	"github.com/google/go-github/v93/github"
 	"golang.org/x/oauth2"
 )
 
@@ -40,6 +40,7 @@ type Filters struct {
 
 type GithubClient struct {
 	client *github.Client
+	err    error
 }
 
 func newGithubClient(token string) *GithubClient {
@@ -49,13 +50,18 @@ func newGithubClient(token string) *GithubClient {
 		&oauth2.Token{AccessToken: token},
 	)
 	oauthClient := oauth2.NewClient(ctx, tokenSource)
+	client, err := github.NewClient(github.WithHTTPClient(oauthClient))
 
 	return &GithubClient{
-		client: github.NewClient(oauthClient),
+		client: client,
+		err:    err,
 	}
 }
 
 func (ghClient *GithubClient) listTags(owner string, repo string) ([]string, error) {
+	if ghClient.err != nil {
+		return nil, fmt.Errorf("create GitHub client: %w", ghClient.err)
+	}
 	tagList := []string{}
 	ctx := context.Background()
 	opts := &github.ListOptions{PerPage: 100, Page: 1}

@@ -1,10 +1,41 @@
 package utils
 
 import (
+	"fmt"
+	"net/http"
+	"net/http/httptest"
 	"testing"
 
+	"github.com/google/go-github/v93/github"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
+
+func TestGithubClientListTags(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(writer http.ResponseWriter, request *http.Request) {
+		assert.Equal(t, "/repos/owner/repo/tags", request.URL.Path)
+		assert.Equal(t, "Bearer test-token", request.Header.Get("Authorization"))
+		writer.Header().Set("Content-Type", "application/json")
+		if request.URL.Query().Get("page") == "1" {
+			writer.Header().Set("Link", fmt.Sprintf("<http://%s/repos/owner/repo/tags?page=2>; rel=\"next\"", request.Host))
+			fmt.Fprint(writer, `[{"name":"1.0.0"}]`)
+			return
+		}
+		assert.Equal(t, "2", request.URL.Query().Get("page"))
+		fmt.Fprint(writer, `[{"name":"2.0.0"}]`)
+	}))
+	defer server.Close()
+
+	client := newGithubClient("test-token")
+	require.NoError(t, client.err)
+	baseURL := server.URL + "/"
+	client.client, client.err = client.client.Clone(github.WithURLs(&baseURL, nil))
+	require.NoError(t, client.err)
+
+	tags, err := client.listTags("owner", "repo")
+	require.NoError(t, err)
+	assert.Equal(t, []string{"1.0.0", "2.0.0"}, tags)
+}
 
 func Test_FilterHighestSemver(t *testing.T) {
 	tests := []struct {

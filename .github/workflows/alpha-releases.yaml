@@ -71,11 +71,11 @@ jobs:
   build-cli:
     name: build-cli
     runs-on: ubuntu-latest
-    container: golang:1.26
+    container: golang:1.27.4
     steps:
     - name: Setup Git environment
       run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
-    - name: Set up Go 1.26 environment
+    - name: Set up Go 1.27.4 environment
       run: go version
     - name: Checkout code for build-cli
       uses: actions/checkout@v6
@@ -103,7 +103,7 @@ jobs:
       OWNER: 13013SwagR
       REPO: semver-manager-test
       TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    container: golang:1.26
+    container: golang:1.27.4
     steps:
     - name: Checkout code
       uses: actions/checkout@v6

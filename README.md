@@ -2,7 +2,7 @@
 
 [![Build](https://github.com/bluepr-nt/semver-manager/actions/workflows/on-push-to-main.yaml/badge.svg)](https://github.com/bluepr-nt/semver-manager/actions/workflows/on-push-to-main.yaml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![Go](https://img.shields.io/badge/Go-1.23-00ADD8.svg)](https://golang.org/)
+[![Go](https://img.shields.io/badge/Go-1.27.4-00ADD8.svg)](https://golang.org/)
 [![Go Report Card](https://goreportcard.com/badge/github.com/bluepr-nt/semver-manager)](https://goreportcard.com/report/github.com/bluepr-nt/semver-manager)
 
 A CLI tool for managing [Semantic Versioning 2.0.0](https://semver.org) compliant versions — increment, filter, and fetch version tags from GitHub repositories.
@@ -46,21 +46,15 @@ smgr fetch -o bluepr-nt -r semver-manager -t "$GITHUB_TOKEN"
 
 ### Building from Source
 
-Prerequisites: [Go](https://golang.org/dl/) 1.23+
+Prerequisites: [Go](https://golang.org/dl/) 1.27.4+
 
 ```bash
 go build -o smgr ./src/cmd/smgr/
 ```
 
-Or with [Devbox](https://www.jetify.com/devbox) (no Go prerequisite):
-
-```bash
-devbox run build
-```
-
 ### System-Wide Install with Just
 
-From a checkout, install to `/usr/local/bin` (requires Go 1.23+, just, and write access to `/usr/local/bin`):
+From a checkout, install to `/usr/local/bin` (requires Go 1.27.4+, just, and write access to `/usr/local/bin`):
 
 ```bash
 just install
@@ -70,7 +64,7 @@ just install
 
 ### System-Wide Install with Go
 
-From a checkout, install with Go 1.23+ to a system-wide directory that your user can write to:
+From a checkout, install with Go 1.27.4+ to a system-wide directory that your user can write to:
 
 ```bash
 GOBIN=/usr/local/bin go install ./src/cmd/smgr
