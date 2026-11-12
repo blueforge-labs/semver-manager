@@ -9,6 +9,7 @@ import (
 
 	"github.com/blueforge-labs/semver-manager/src/cmd/filter"
 	datasourceUtils "github.com/blueforge-labs/semver-manager/src/datasource/utils"
+	"github.com/blueforge-labs/semver-manager/src/pkg/tagprefix"
 
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
@@ -39,6 +40,7 @@ fetched versions.`,
 		Flags: filter.FilterFlags(filterArgs),
 		Action: func(ctx context.Context, cmd *cli.Command) error {
 			config.dryRun = cmd.Bool("dry-run")
+			filterArgs.Prefix = cmd.String("prefix")
 			return RunFetchSemverTags(config, cmd, filterArgs)
 		},
 	}
@@ -80,7 +82,7 @@ func RunFetchSemverTags(config *config, cmd *cli.Command, filterArgs *filter.Fil
 		}
 		return filteredTags[i].String() < filteredTags[j].String()
 	})
-	_, err = fmt.Fprintln(cmd.Writer, filteredTags.String())
+	_, err = fmt.Fprintln(cmd.Writer, tagprefix.FormatVersions(filteredTags, filterArgs.Prefix))
 
 	return err
 }

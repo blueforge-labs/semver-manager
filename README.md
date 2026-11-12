@@ -98,9 +98,64 @@ This requires `base-devel`, Git and Go; `makepkg -si` can install the declared b
 
 Other Go projects can depend on this repository with `go get github.com/blueforge-labs/semver-manager@latest`. Library packages are under `src/`, for example `github.com/blueforge-labs/semver-manager/src/pkg/increment`.
 
+### Go Client
+
+The `src/client` package provides a client facade for fetching, filtering, incrementing, validating, and pushing version tags. A prefix is applied to tag names and can be any namespace, such as `v` or `release/`.
+
+```go
+package main
+
+import (
+  "log"
+  "os"
+
+  "github.com/blueforge-labs/semver-manager/src/client"
+  "github.com/blueforge-labs/semver-manager/src/models"
+  "github.com/blueforge-labs/semver-manager/src/pkg/filter"
+)
+
+func main() {
+  api := client.New(client.Config{
+    Owner:      "blueforge-labs",
+    Repository: "semver-manager",
+    Token:      os.Getenv("GITHUB_TOKEN"),
+    Prefix:     "v",
+  })
+  versions, err := api.Fetch()
+  if err != nil {
+    log.Fatal(err)
+  }
+  versions, err = api.Filter(versions, filter.Highest())
+  if err != nil {
+    log.Fatal(err)
+  }
+  stream, err := models.ParseVersionPattern("*.*.*")
+  if err != nil {
+    log.Fatal(err)
+  }
+  next, err := api.Increment(versions, stream, models.Patch)
+  if err != nil {
+    log.Fatal(err)
+  }
+  name := api.FormatRelease(next) // v<next version>
+  valid, err := api.Validate(name, "strict")
+  if err != nil {
+    log.Fatal(err)
+  }
+  if !valid {
+    log.Fatal("incremented version is invalid")
+  }
+  log.Println(name)
+}
+```
+
+`Push(ctx, version, target)` creates a Git tag only (not a GitHub Release). Its target may be a commit SHA or GitHub ref; an empty target uses the local repository's `HEAD`. The optional `LocalPath` config selects the local repository directory.
+
 ## Commands
 
 All commands support a `--dry-run` flag. Use `-v 1` to enable debug logging.
+
+Use the global `--prefix` option to read and emit tags in a namespace. For example, `smgr --prefix release/ filter --versions "release/1.0.0 release/2.0.0" --highest` prints `release/2.0.0`, and `smgr --prefix v increment --source-versions "v1.2.3"` prints `v1.2.4`.
 
 ### increment
 
