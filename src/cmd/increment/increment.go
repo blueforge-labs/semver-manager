@@ -3,10 +3,11 @@ package increment
 import (
 	"context"
 	"fmt"
+	"strings"
 
 	"github.com/blueforge-labs/semver-manager/src/models"
-	"github.com/blueforge-labs/semver-manager/src/pkg/filter"
 	"github.com/blueforge-labs/semver-manager/src/pkg/increment"
+	"github.com/blueforge-labs/semver-manager/src/pkg/tagprefix"
 
 	"github.com/urfave/cli/v3"
 )
@@ -17,6 +18,7 @@ type config struct {
 	sourceVersions string
 	repository     string
 	targetStream   string
+	prefix         string
 }
 
 func NewIncrementCommand() *cli.Command {
@@ -43,6 +45,7 @@ Increment a version according to the provided:
 		},
 		Action: func(ctx context.Context, cmd *cli.Command) error {
 			config.dryRun = cmd.Bool("dry-run")
+			config.prefix = cmd.String("prefix")
 			level := cmd.String("level")
 			targetStream := cmd.String("target-stream")
 
@@ -58,7 +61,10 @@ Increment a version according to the provided:
 }
 
 func RunIncrement(config *config, cmd *cli.Command) error {
-	sourceVersions := filter.GetValidVersions(config.sourceVersions)
+	sourceVersions := []models.Version{{}}
+	if strings.TrimSpace(config.sourceVersions) != "" {
+		sourceVersions = tagprefix.Parse([]string{config.sourceVersions}, config.prefix)
+	}
 
 	var err error
 	var targetStream models.VersionPattern
@@ -73,6 +79,6 @@ func RunIncrement(config *config, cmd *cli.Command) error {
 	if err != nil {
 		return err
 	}
-	_, err = fmt.Fprint(cmd.Writer, newVersion.String())
+	_, err = fmt.Fprint(cmd.Writer, tagprefix.Format(newVersion, config.prefix))
 	return err
 }

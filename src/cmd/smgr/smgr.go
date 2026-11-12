@@ -21,6 +21,7 @@ func NewRootCommand(output io.Writer) *cli.Command {
 		Flags: []cli.Flag{
 			&cli.BoolFlag{Name: "dry-run", Usage: "Execute the command in dry-run mode"},
 			&cli.IntFlag{Name: "v", Usage: "Set logging verbosity"},
+			&cli.StringFlag{Name: "prefix", Usage: "Prefix used for version tags and release output"},
 		},
 		Action: func(ctx context.Context, cmd *cli.Command) error {
 			return cli.ShowRootCommandHelp(cmd)

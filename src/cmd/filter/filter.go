@@ -6,6 +6,7 @@ import (
 
 	"github.com/blueforge-labs/semver-manager/src/models"
 	"github.com/blueforge-labs/semver-manager/src/pkg/filter"
+	"github.com/blueforge-labs/semver-manager/src/pkg/tagprefix"
 
 	"github.com/urfave/cli/v3"
 )
@@ -20,11 +21,12 @@ func NewFilterCommand(filterArgs *FilterArgs) *cli.Command {
 		Description: `Filter is a CLI tool for filtering versions using various criteria.`,
 		Flags:       FilterFlags(filterArgs),
 		Action: func(ctx context.Context, cmd *cli.Command) error {
+			filterArgs.Prefix = cmd.String("prefix")
 			semverTags, err := Filter(filterArgs)
 			if err != nil {
 				return err
 			}
-			_, err = fmt.Fprintln(cmd.Writer, semverTags.String())
+			_, err = fmt.Fprintln(cmd.Writer, tagprefix.FormatVersions(semverTags, filterArgs.Prefix))
 			if err != nil {
 				return err
 			}
@@ -42,7 +44,7 @@ func FilterFlags(filterArgs *FilterArgs) []cli.Flag {
 }
 
 func Filter(filterArgs *FilterArgs) (models.VersionSlice, error) {
-	versions := filter.GetValidVersions(filterArgs.Versions)
+	versions := tagprefix.Parse([]string{filterArgs.Versions}, filterArgs.Prefix)
 
 	filters := []filter.FilterFunc{}
 	if filterArgs.StreamFilter != "" {
