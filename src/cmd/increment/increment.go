@@ -1,12 +1,14 @@
 package increment
 
 import (
-	"github.com/blueforge-labs/semver-manager/src/cmd/utils"
+	"context"
+	"fmt"
+
 	"github.com/blueforge-labs/semver-manager/src/models"
 	"github.com/blueforge-labs/semver-manager/src/pkg/filter"
 	"github.com/blueforge-labs/semver-manager/src/pkg/increment"
 
-	"github.com/spf13/cobra"
+	"github.com/urfave/cli/v3"
 )
 
 type config struct {
@@ -17,12 +19,12 @@ type config struct {
 	targetStream   string
 }
 
-func NewIncrementCommand() *cobra.Command {
+func NewIncrementCommand() *cli.Command {
 	config := &config{}
-	incrementCmd := &cobra.Command{
-		Use:   "increment",
-		Short: "Increment a version",
-		Long: `
+	incrementCmd := &cli.Command{
+		Name:  "increment",
+		Usage: "Increment a version",
+		Description: `
 Increment a version according to one of the required flags --level or --target-stream, 
 and any combination of the optional flags:
 
@@ -34,34 +36,28 @@ Increment a version according to the provided:
   - The source, any of: repository, source-stream, source-version, source-versions
   - The target stream, if specified, e.g. 1.2.* (optional)
   `,
-		PersistentPreRun: func(cmd *cobra.Command, args []string) {},
-
-		PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
-			return utils.InitializeConfig(cmd)
+		Flags: []cli.Flag{
+			&cli.StringFlag{Name: "level", Aliases: []string{"l"}, Value: string(models.Patch), Usage: "The level of increment to perform: major, minor, patch", Destination: &config.incrementType},
+			&cli.StringFlag{Name: "target-stream", Aliases: []string{"t"}, Usage: "The target stream to increment to e.g. 1.2.* (optional)", Destination: &config.targetStream},
+			&cli.StringFlag{Name: "source-versions", Aliases: []string{"s"}, Usage: "The source versions to increment from e.g. \"0.0.0,1.0.0,1.1.0\" (optional)", Destination: &config.sourceVersions},
 		},
-		RunE: func(cmd *cobra.Command, args []string) error {
-			dryRun, _ := cmd.PersistentFlags().GetBool("dry-run")
-			config.dryRun = dryRun
-			level, _ := cmd.Flags().GetString("level")
-			targetStream, _ := cmd.Flags().GetString("target-stream")
+		Action: func(ctx context.Context, cmd *cli.Command) error {
+			config.dryRun = cmd.Bool("dry-run")
+			level := cmd.String("level")
+			targetStream := cmd.String("target-stream")
 
 			if level == "" && targetStream == "" {
-				cmd.Flags().Set("level", string(models.Patch))
+				config.incrementType = string(models.Patch)
 			}
 
 			return RunIncrement(config, cmd)
 		},
 	}
 
-	incrementCmd.Flags().StringVarP(&config.incrementType, "level", "l", string(models.Patch), "The level of increment to perform, options: major, minor, patch (defaults to patch if --target-stream not specified)")
-	incrementCmd.Flags().StringVarP(&config.targetStream, "target-stream", "t", "", "The target stream to increment to e.g. 1.2.* (optional)")
-	incrementCmd.Flags().StringVarP(&config.sourceVersions, "source-versions", "s", "", "The source versions to increment from e.g. \"0.0.0,1.0.0,1.1.0\" (optional)")
-	// incrementCmd.Flags().StringVarP(&config.repository, "repository", "r", "", "The repository to increment the version of e.g. https://github.com/<user|org>/<repo> (optional)")
-
 	return incrementCmd
 }
 
-func RunIncrement(config *config, cmd *cobra.Command) error {
+func RunIncrement(config *config, cmd *cli.Command) error {
 	sourceVersions := filter.GetValidVersions(config.sourceVersions)
 
 	var err error
@@ -77,6 +73,6 @@ func RunIncrement(config *config, cmd *cobra.Command) error {
 	if err != nil {
 		return err
 	}
-	cmd.Print(newVersion.String())
-	return nil
+	_, err = fmt.Fprint(cmd.Writer, newVersion.String())
+	return err
 }

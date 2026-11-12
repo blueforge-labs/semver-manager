@@ -2,23 +2,16 @@ package increment
 
 import (
 	"bytes"
+	"context"
 	"testing"
 
-	"github.com/joho/godotenv"
 	"github.com/stretchr/testify/assert"
+	"github.com/urfave/cli/v3"
 )
 
 type testFlag struct {
 	name  string
 	value string
-}
-
-func LoadEnvFromFile() error {
-	err := godotenv.Load("increment_test.yaml")
-	if err != nil {
-		return err
-	}
-	return nil
 }
 
 func TestNewIncrementCommand(t *testing.T) {
@@ -29,22 +22,30 @@ func TestNewIncrementCommand(t *testing.T) {
 
 	t.Run("Command name is 'increment'", func(t *testing.T) {
 		cmd := NewIncrementCommand()
-		assert.Equal(t, "increment", cmd.Name())
+		assert.Equal(t, "increment", cmd.Name)
 	})
 
 	t.Run("Command has expected flags", func(t *testing.T) {
 		cmd := NewIncrementCommand()
-		flags := cmd.Flags()
 		expectedFlags := []string{"level", "source-versions", "target-stream"}
 		for _, expectedFlag := range expectedFlags {
-			assert.NotNil(t, flags.Lookup(expectedFlag))
-
+			assert.True(t, hasFlag(cmd.Flags, expectedFlag))
 		}
 	})
 }
 
+func hasFlag(flags []cli.Flag, name string) bool {
+	for _, flag := range flags {
+		for _, flagName := range flag.Names() {
+			if flagName == name {
+				return true
+			}
+		}
+	}
+	return false
+}
+
 func TestNewIncrementCommandFlags(t *testing.T) {
-	LoadEnvFromFile()
 	tests := []struct {
 		name               string
 		flags              []testFlag
@@ -115,14 +116,15 @@ func TestNewIncrementCommandFlags(t *testing.T) {
 			output := new(bytes.Buffer)
 
 			cmd := NewIncrementCommand()
-			cmd.SetOutput(output)
-			cmd.SetErr(output)
+			cmd.Writer = output
+			cmd.ErrWriter = output
+			args := []string{cmd.Name}
 
 			for _, flag := range tt.flags {
-				cmd.Flags().Set(flag.name, flag.value)
+				args = append(args, "--"+flag.name, flag.value)
 			}
 
-			err := cmd.Execute()
+			err := cmd.Run(context.Background(), args)
 			assert.Equal(t, tt.expectedError, err)
 			assert.Equal(t, tt.expectedNewVersion, output.String())
 		})

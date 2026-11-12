@@ -2,12 +2,13 @@ package filter
 
 import (
 	"bytes"
+	"context"
 	"strings"
 	"testing"
 
-	"github.com/spf13/cobra"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"github.com/urfave/cli/v3"
 )
 
 func TestNewFilterCommand(t *testing.T) {
@@ -52,11 +53,11 @@ func TestNewFilterCommand(t *testing.T) {
 	}
 }
 
-func executeCommand(cmd *cobra.Command, args ...string) (string, error) {
+func executeCommand(cmd *cli.Command, args ...string) (string, error) {
 	buf := new(bytes.Buffer)
-	cmd.SetOut(buf)
-	cmd.SetErr(buf)
-	cmd.SetArgs(args)
-	err := cmd.Execute()
+	cmd.Writer = buf
+	cmd.ErrWriter = buf
+	arguments := append([]string{cmd.Name}, args...)
+	err := cmd.Run(context.Background(), arguments)
 	return strings.TrimSpace(buf.String()), err
 }
