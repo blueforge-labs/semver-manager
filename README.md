@@ -100,7 +100,7 @@ Other Go projects can depend on this repository with `go get github.com/blueforg
 
 ## Commands
 
-All commands support a `--dry-run` flag and standard logging flags (`-v` for verbosity).
+All commands support a `--dry-run` flag. Use `-v 1` to enable debug logging.
 
 ### increment
 

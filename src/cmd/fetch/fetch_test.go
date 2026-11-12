@@ -2,12 +2,14 @@ package fetch
 
 import (
 	"bytes"
+	"context"
 	"testing"
 
 	"github.com/blueforge-labs/semver-manager/src/cmd/filter"
 	"github.com/blueforge-labs/semver-manager/src/testutils"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/urfave/cli/v3"
 )
 
 type testFlag struct {
@@ -25,20 +27,17 @@ func TestNewFetchCommand(t *testing.T) {
 
 	t.Run("Command name is 'fetch'", func(t *testing.T) {
 		cmd := NewFetchCommand(nil)
-		if cmd.Name() != "fetch" {
-			t.Errorf("Command name is '%s', expected 'fetch'", cmd.Name())
+		if cmd.Name != "fetch" {
+			t.Errorf("Command name is '%s', expected 'fetch'", cmd.Name)
 		}
 	})
 
 	t.Run("Command has expected flags", func(t *testing.T) {
 		filterArgs := &filter.FilterArgs{}
 		cmd := NewFetchCommand(filterArgs)
-		filterCmd := filter.NewFilterCommand(filterArgs)
-		cmd.Flags().AddFlagSet(filterCmd.Flags())
-		flags := cmd.Flags()
 		expectedFlags := []string{"owner", "repo", "token", "platform", "highest"}
 		for _, expectedFlag := range expectedFlags {
-			if flags.Lookup(expectedFlag) == nil {
+			if !hasFlag(cmd.Flags, expectedFlag) {
 				t.Errorf("Command does not have expected flag '%s'", expectedFlag)
 			}
 		}
@@ -47,6 +46,17 @@ func TestNewFetchCommand(t *testing.T) {
 	t.Run("End-to-end command with valid inputs and validate outputs", func(t *testing.T) {
 		// TODO
 	})
+}
+
+func hasFlag(flags []cli.Flag, name string) bool {
+	for _, flag := range flags {
+		for _, flagName := range flag.Names() {
+			if flagName == name {
+				return true
+			}
+		}
+	}
+	return false
 }
 
 func TestNewFetchCommandRealRepo(t *testing.T) {
@@ -99,22 +109,23 @@ func TestNewFetchCommandRealRepo(t *testing.T) {
 			output := new(bytes.Buffer)
 			filterArgs := &filter.FilterArgs{}
 			filterCmd := filter.NewFilterCommand(filterArgs)
-			filterCmd.SetOut(output)
-			filterCmd.SetErr(output)
+			filterCmd.Writer = output
+			filterCmd.ErrWriter = output
 
 			cmd := NewFetchCommand(filterArgs)
-			cmd.Flags().AddFlagSet(filterCmd.Flags())
-			cmd.SetOut(output)
-			cmd.SetErr(output)
+			cmd.Writer = output
+			cmd.ErrWriter = output
+			args := []string{cmd.Name}
 
 			for _, flag := range tc.flags {
-				err := cmd.Flags().Set(flag.name, flag.value)
-				if err != nil {
-					t.Fatalf("unexpected error setting flag '%s': %v", flag.name, err)
+				if flag.name == "highest" {
+					args = append(args, "--"+flag.name+"="+flag.value)
+				} else {
+					args = append(args, "--"+flag.name, flag.value)
 				}
 			}
 
-			err := cmd.Execute()
+			err := cmd.Run(context.Background(), args)
 			assert.NoError(t, err, "Expected no error")
 
 			assert.Equal(t, tc.expectedTags, output.String())
