@@ -1,45 +1,67 @@
 package filter
 
 import (
-	"src/cmd/smgr/models"
-	"src/cmd/smgr/pkg/filter"
+	"context"
+	"fmt"
 
-	"github.com/spf13/cobra"
+	"github.com/blueforge-labs/semver-manager/src/models"
+	"github.com/blueforge-labs/semver-manager/src/pkg/filter"
+	"github.com/blueforge-labs/semver-manager/src/pkg/tagprefix"
+
+	"github.com/urfave/cli/v3"
 )
 
-func NewFilterCommand() *cobra.Command {
-	filterArgs := &FilterArgs{}
-	var filterCmd = &cobra.Command{
-		Use:   "filter",
-		Short: "Filter is a CLI tool for filtering versions",
-		Long:  `Filter is a CLI tool for filtering versions using various criteria.`,
-		RunE: func(cmd *cobra.Command, args []string) error {
-			versions := filter.GetVersions(filterArgs.Versions)
-
-			filters := []filter.FilterFunc{}
-			if filterArgs.StreamFilter != "" {
-				pattern, err := models.ParseVersionPattern(filterArgs.StreamFilter)
-				if err != nil {
-					return err
-				}
-				filters = append(filters, filter.VersionPatternFilter(pattern))
-			}
-
-			if filterArgs.Highest {
-				filters = append(filters, filter.Highest())
-			}
-
-			semverTags, err := filter.ApplyFilters(versions, filters...)
+func NewFilterCommand(filterArgs *FilterArgs) *cli.Command {
+	if filterArgs == nil {
+		filterArgs = &FilterArgs{}
+	}
+	return &cli.Command{
+		Name:        "filter",
+		Usage:       "Filter is a CLI tool for filtering versions",
+		Description: `Filter is a CLI tool for filtering versions using various criteria.`,
+		Flags:       FilterFlags(filterArgs),
+		Action: func(ctx context.Context, cmd *cli.Command) error {
+			filterArgs.Prefix = cmd.String("prefix")
+			semverTags, err := Filter(filterArgs)
 			if err != nil {
 				return err
 			}
-			cmd.Println(semverTags.String())
+			_, err = fmt.Fprintln(cmd.Writer, tagprefix.FormatVersions(semverTags, filterArgs.Prefix))
+			if err != nil {
+				return err
+			}
 			return nil
 		},
 	}
+}
 
-	filterCmd.Flags().StringVarP(&filterArgs.Versions, "versions", "V", "", "Version list to filter")
-	filterCmd.Flags().StringVarP(&filterArgs.StreamFilter, "stream", "s", "", "Filter by major, minor, patch, prerelease version and build metadata streams")
-	filterCmd.Flags().BoolVarP(&filterArgs.Highest, "highest", "H", false, "Filter by highest version")
-	return filterCmd
+func FilterFlags(filterArgs *FilterArgs) []cli.Flag {
+	return []cli.Flag{
+		&cli.StringFlag{Name: "versions", Aliases: []string{"V"}, Usage: "Version list to filter", Destination: &filterArgs.Versions},
+		&cli.StringFlag{Name: "stream", Aliases: []string{"s"}, Usage: "Filter by major, minor, patch, prerelease version and build metadata streams", Destination: &filterArgs.StreamFilter},
+		&cli.BoolFlag{Name: "highest", Aliases: []string{"H"}, Usage: "Filter by highest version", Destination: &filterArgs.Highest},
+	}
+}
+
+func Filter(filterArgs *FilterArgs) (models.VersionSlice, error) {
+	versions := tagprefix.Parse([]string{filterArgs.Versions}, filterArgs.Prefix)
+
+	filters := []filter.FilterFunc{}
+	if filterArgs.StreamFilter != "" {
+		pattern, err := models.ParseVersionPattern(filterArgs.StreamFilter)
+		if err != nil {
+			return nil, err
+		}
+		filters = append(filters, filter.VersionPatternFilter(pattern))
+	}
+
+	if filterArgs.Highest {
+		filters = append(filters, filter.Highest())
+	}
+
+	semverTags, err := filter.ApplyFilters(versions, filters...)
+	if err != nil {
+		return nil, err
+	}
+	return semverTags, nil
 }

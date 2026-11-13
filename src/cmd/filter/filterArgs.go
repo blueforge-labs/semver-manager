@@ -5,4 +5,5 @@ type FilterArgs struct {
 	Highest      bool
 	Release      bool
 	Versions     string
+	Prefix       string
 }

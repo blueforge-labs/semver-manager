@@ -1,15 +1,15 @@
 package oci
 
 import (
-	"src/cmd/smgr/models"
-	"src/cmd/smgr/util"
+	"github.com/blueforge-labs/semver-manager/src/models"
+	"github.com/blueforge-labs/semver-manager/src/utils"
 )
 
 type OciCLient struct {
-	config *util.DatasourceConfig
+	config *utils.DatasourceConfig
 }
 
-func NewFetcher(config *util.DatasourceConfig) *OciCLient {
+func NewFetcher(config *utils.DatasourceConfig) *OciCLient {
 	return &OciCLient{config: config}
 }
 

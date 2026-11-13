@@ -1,55 +1,47 @@
 package main
 
 import (
-	"flag"
+	"context"
 	"fmt"
 	"io"
 	"os"
 
-	"github.com/spf13/cobra"
-	"k8s.io/klog/v2"
+	"github.com/urfave/cli/v3"
 
-	"src/cmd/smgr/cmd/fetch"
-	"src/cmd/smgr/cmd/filter"
-	"src/cmd/smgr/cmd/utils"
+	"github.com/blueforge-labs/semver-manager/src/cmd/fetch"
+	"github.com/blueforge-labs/semver-manager/src/cmd/filter"
+	"github.com/blueforge-labs/semver-manager/src/cmd/increment"
 )
 
-type config struct {
-	dryRun bool
-}
-
-func NewRootCommand(output io.Writer) *cobra.Command {
-	config := config{
-		dryRun: false,
-	}
-	cmd := &cobra.Command{
-		Use:   "smgr",
-		Short: "Manage Semantic Versioning compliant versions.",
-		Long:  `Manage Semantic Versioning compliant versions and integrate with popular repository and registry platform to facilitate the task.`,
-		PersistentPreRun: func(cmd *cobra.Command, args []string) {
-			utils.InitializeConfig(cmd)
+func NewRootCommand(output io.Writer) *cli.Command {
+	cmd := &cli.Command{
+		Name:        "smgr",
+		Usage:       "Manage Semantic Versioning compliant versions.",
+		Description: `Manage Semantic Versioning compliant versions and integrate with popular repository and registry platform to facilitate the task.`,
+		Flags: []cli.Flag{
+			&cli.BoolFlag{Name: "dry-run", Usage: "Execute the command in dry-run mode"},
+			&cli.IntFlag{Name: "v", Usage: "Set logging verbosity"},
+			&cli.StringFlag{Name: "prefix", Usage: "Prefix used for version tags and release output"},
 		},
-		Run: func(cmd *cobra.Command, args []string) {
-			cmd.Help()
+		Action: func(ctx context.Context, cmd *cli.Command) error {
+			return cli.ShowRootCommandHelp(cmd)
 		},
+		Writer:    output,
+		ErrWriter: os.Stderr,
 	}
 
-	cmd.PersistentFlags().BoolVar(&config.dryRun, "dry-run", false, "Execute the command in dry-run mode")
-	cmd.PersistentFlags().AddGoFlagSet(flag.CommandLine)
-	filterCmd := filter.NewFilterCommand()
-	cmd.AddCommand(filterCmd, fetch.NewFetchCommand(filterCmd))
+	filterArgs := &filter.FilterArgs{}
+	filterCmd := filter.NewFilterCommand(filterArgs)
+	fetchCmd := fetch.NewFetchCommand(filterArgs)
+	cmd.Commands = []*cli.Command{filterCmd, fetchCmd, increment.NewIncrementCommand()}
 
 	return cmd
 }
 
 func main() {
-	klog.InitFlags(nil)
-	flag.Set("logtostderr", "false")
-	flag.Set("alsologtostderr", "false")
-	flag.Parse()
-	rootCmd := NewRootCommand(nil)
-	
-	if err := rootCmd.Execute(); err != nil {
+	rootCmd := NewRootCommand(os.Stdout)
+
+	if err := rootCmd.Run(context.Background(), os.Args); err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)
 	}

@@ -1,15 +1,15 @@
 package github
 
 import (
-	"src/cmd/smgr/models"
-	"src/cmd/smgr/util"
+	"github.com/blueforge-labs/semver-manager/src/models"
+	"github.com/blueforge-labs/semver-manager/src/utils"
 )
 
 type GithubClient struct {
-	config *util.DatasourceConfig
+	config *utils.DatasourceConfig
 }
 
-func NewFetcher(config *util.DatasourceConfig) *GithubClient {
+func NewFetcher(config *utils.DatasourceConfig) *GithubClient {
 	return &GithubClient{config: config}
 }
 

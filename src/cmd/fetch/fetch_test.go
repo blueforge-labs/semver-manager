@@ -2,27 +2,19 @@ package fetch
 
 import (
 	"bytes"
-	"src/cmd/smgr/cmd/filter"
-
-	// "fmt"
-	"os"
+	"context"
 	"testing"
 
-	"github.com/joho/godotenv"
+	"github.com/blueforge-labs/semver-manager/src/cmd/filter"
+	"github.com/blueforge-labs/semver-manager/src/testutils"
+
 	"github.com/stretchr/testify/assert"
+	"github.com/urfave/cli/v3"
 )
 
 type testFlag struct {
 	name  string
 	value string
-}
-
-func LoadEnvFromFile() error {
-	err := godotenv.Load("fetch_test.yaml")
-	if err != nil {
-		return err
-	}
-	return nil
 }
 
 func TestNewFetchCommand(t *testing.T) {
@@ -35,17 +27,17 @@ func TestNewFetchCommand(t *testing.T) {
 
 	t.Run("Command name is 'fetch'", func(t *testing.T) {
 		cmd := NewFetchCommand(nil)
-		if cmd.Name() != "fetch" {
-			t.Errorf("Command name is '%s', expected 'fetch'", cmd.Name())
+		if cmd.Name != "fetch" {
+			t.Errorf("Command name is '%s', expected 'fetch'", cmd.Name)
 		}
 	})
 
 	t.Run("Command has expected flags", func(t *testing.T) {
-		cmd := NewFetchCommand(filter.NewFilterCommand())
-		flags := cmd.Flags()
+		filterArgs := &filter.FilterArgs{}
+		cmd := NewFetchCommand(filterArgs)
 		expectedFlags := []string{"owner", "repo", "token", "platform", "highest"}
 		for _, expectedFlag := range expectedFlags {
-			if flags.Lookup(expectedFlag) == nil {
+			if !hasFlag(cmd.Flags, expectedFlag) {
 				t.Errorf("Command does not have expected flag '%s'", expectedFlag)
 			}
 		}
@@ -56,8 +48,21 @@ func TestNewFetchCommand(t *testing.T) {
 	})
 }
 
+func hasFlag(flags []cli.Flag, name string) bool {
+	for _, flag := range flags {
+		for _, flagName := range flag.Names() {
+			if flagName == name {
+				return true
+			}
+		}
+	}
+	return false
+}
+
 func TestNewFetchCommandRealRepo(t *testing.T) {
-	LoadEnvFromFile()
+	owner := "blueforge-labs"
+	repo := "semver-manager-test"
+	token := testutils.GetGithubToken()
 	tests := []struct {
 		name         string
 		flags        []testFlag
@@ -66,20 +71,20 @@ func TestNewFetchCommandRealRepo(t *testing.T) {
 		{
 			name: "fetch all semver tags",
 			flags: []testFlag{
-				{"owner", os.Getenv("OWNER")},
-				{"repo", os.Getenv("REPO")},
-				{"token", os.Getenv("TOKEN")},
+				{"owner", owner},
+				{"repo", repo},
+				{"token", token},
 				{"platform", "github"},
 				{"highest", "false"},
 			},
-			expectedTags: "0.0.4 1.0.0-0A.is.legal 1.0.0-alpha 1.0.0-alpha+beta 1.0.0-alpha.1 1.0.0-alpha.0valid 1.0.0-alpha.beta 1.0.0-alpha.beta.1 1.0.0-alpha-a.b-c-somethinglong+build.1-aef.1-its-okay 1.0.0-alpha0.valid 1.0.0-beta 1.0.0-rc.1+build.1 1.0.0 1.0.0+0.build.1-rc.10000aaa-kk-0.1 1.1.2-prerelease+meta 1.1.2+meta 1.1.2+meta-valid 1.1.7 1.2.3----R-S.12.9.1--.12+meta 1.2.3----RC-SNAPSHOT.12.9.1--.12+788 1.2.3----RC-SNAPSHOT.12.9.1--.12 1.2.3-SNAPSHOT-123 1.2.3-beta 1.2.3 2.0.0-rc.1+build.123 2.0.0+build.1848 2.0.0 2.0.1-alpha.1227 10.2.3-DEV-SNAPSHOT 10.20.30\n",
+			expectedTags: "10.20.30 10.2.3-DEV-SNAPSHOT 2.0.1-alpha.1227 2.0.0 2.0.0+build.1848 2.0.0-rc.1+build.123 1.2.3 1.2.3-beta 1.2.3-SNAPSHOT-123 1.2.3----RC-SNAPSHOT.12.9.1--.12 1.2.3----RC-SNAPSHOT.12.9.1--.12+788 1.2.3----R-S.12.9.1--.12+meta 1.1.7 1.1.2+meta 1.1.2+meta-valid 1.1.2-prerelease+meta 1.0.0 1.0.0+0.build.1-rc.10000aaa-kk-0.1 1.0.0-rc.1+build.1 1.0.0-beta 1.0.0-alpha0.valid 1.0.0-alpha-a.b-c-somethinglong+build.1-aef.1-its-okay 1.0.0-alpha.beta.1 1.0.0-alpha.beta 1.0.0-alpha.0valid 1.0.0-alpha.1 1.0.0-alpha 1.0.0-alpha+beta 1.0.0-0A.is.legal 0.0.4\n",
 		},
 		{
 			name: "fetch only the highest semver tag",
 			flags: []testFlag{
-				{"owner", os.Getenv("OWNER")},
-				{"repo", os.Getenv("REPO")},
-				{"token", os.Getenv("TOKEN")},
+				{"owner", owner},
+				{"repo", repo},
+				{"token", token},
 				{"platform", "github"},
 				{"highest", "true"},
 			},
@@ -88,37 +93,39 @@ func TestNewFetchCommandRealRepo(t *testing.T) {
 		{
 			name: "fetch only release semver tags",
 			flags: []testFlag{
-				{"owner", os.Getenv("OWNER")},
-				{"repo", os.Getenv("REPO")},
-				{"token", os.Getenv("TOKEN")},
+				{"owner", owner},
+				{"repo", repo},
+				{"token", token},
 				{"platform", "github"},
 				{"highest", "false"},
 				{"stream", "*.*.*"},
 			},
-			expectedTags: "0.0.4 1.0.0 1.0.0+0.build.1-rc.10000aaa-kk-0.1 1.1.2+meta 1.1.2+meta-valid 1.1.7 1.2.3 2.0.0+build.1848 2.0.0 10.20.30\n",
+			expectedTags: "10.20.30 2.0.0 2.0.0+build.1848 1.2.3 1.1.7 1.1.2+meta 1.1.2+meta-valid 1.0.0 1.0.0+0.build.1-rc.10000aaa-kk-0.1 0.0.4\n",
 		},
 	}
 
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
 			output := new(bytes.Buffer)
-			
-			filterCmd := filter.NewFilterCommand()
-			filterCmd.SetOut(output)
-			filterCmd.SetErr(output)
-			
-			cmd := NewFetchCommand(filterCmd)
-			cmd.SetOut(output)
-			cmd.SetErr(output)
+			filterArgs := &filter.FilterArgs{}
+			filterCmd := filter.NewFilterCommand(filterArgs)
+			filterCmd.Writer = output
+			filterCmd.ErrWriter = output
+
+			cmd := NewFetchCommand(filterArgs)
+			cmd.Writer = output
+			cmd.ErrWriter = output
+			args := []string{cmd.Name}
 
 			for _, flag := range tc.flags {
-				err := cmd.Flags().Set(flag.name, flag.value)
-				if err != nil {
-					t.Fatalf("unexpected error setting flag '%s': %v", flag.name, err)
+				if flag.name == "highest" {
+					args = append(args, "--"+flag.name+"="+flag.value)
+				} else {
+					args = append(args, "--"+flag.name, flag.value)
 				}
 			}
 
-			err := cmd.Execute()
+			err := cmd.Run(context.Background(), args)
 			assert.NoError(t, err, "Expected no error")
 
 			assert.Equal(t, tc.expectedTags, output.String())

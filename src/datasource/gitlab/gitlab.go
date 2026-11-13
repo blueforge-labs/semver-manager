@@ -1,15 +1,15 @@
 package gitlab
 
 import (
-	"src/cmd/smgr/models"
-	"src/cmd/smgr/util"
+	"github.com/blueforge-labs/semver-manager/src/models"
+	"github.com/blueforge-labs/semver-manager/src/utils"
 )
 
 type GitlabClient struct {
-	config *util.DatasourceConfig
+	config *utils.DatasourceConfig
 }
 
-func NewFetcher(config *util.DatasourceConfig) *GitlabClient {
+func NewFetcher(config *utils.DatasourceConfig) *GitlabClient {
 	return &GitlabClient{config: config}
 }
 
